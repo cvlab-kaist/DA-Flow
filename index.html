@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DA-Flow: Degradation-Aware Optical Flow with Diffusion Models</title>
+<meta name="description"
+content="Project page for DA-Flow: Degradation-Aware Optical Flow with Diffusion Models" />
+
+<!-- Fonts and Icons -->
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="style.css" />
+
+<!-- MathJax -->
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar" aria-label="Section navigation">
+<a href="#overview" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Overview</span>
+</a>
+<a href="#analysis" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Analysis</span>
+</a>
+<a href="#daflow" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">DA-Flow</span>
+</a>
+<a href="#results" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Results</span>
+</a>
+<a href="#citation" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Citation</span>
+</a>
+</nav>
+
+<!-- Hero Section -->
+<section id="overview" class="hero-section">
+<div class="hero-container">
+    <h1 class="hero-title">
+    <span class="gradient-text">DA-Flow</span>: Degradation-Aware <br> Optical Flow with Diffusion Models
+    </h1>
+    <p class="hero-status">arXiv 2026</p>
+
+    <!-- Authors -->
+    <div class="hero-authors">
+    <span><a href="#">Jaewon Min<sup>1</sup></a></span>
+    <span><a href="#">Jaeeun Lee<sup>1</sup></a></span>
+    <span><a href="#">Yeji Choi<sup>1</sup></a></span>
+    <span><a href="#">Paul Hyunbin Cho<sup>1</sup></a></span>
+    <span><a href="#">Jin Hyeon Kim<sup>1</sup></a></span>
+    <span><a href="#">Tae-Young Lee<sup>2</sup></a></span>
+    <span><a href="#">Jongsik Ahn<sup>2</sup></a></span>
+    <span><a href="#">Hwayeong Lee<sup>2</sup></a></span>
+    <span><a href="#">Seonghyun Park<sup>2</sup></a></span>
+    <span><a href="https://cvlab.kaist.ac.kr">Seungryong Kim<sup>1&dagger;</sup></a></span>
+    </div>
+
+    <div class="hero-affiliations">
+    <span><sup>1</sup>KAIST AI</span>
+    <span><sup>2</sup>Hanwha Systems</span>
+    </div>
+
+    <div class="hero-notes">
+    <span>&dagger;: Corresponding author</span>
+    </div>
+
+    <!-- Link Buttons -->
+    <div class="hero-buttons">
+    <a href="assets/Degradation_Aware_Optical_Flow_with_Diffusion_Models.pdf" class="btn">
+        <i class="fa-solid fa-file-pdf"></i> Paper
+    </a>
+    <a href="#" class="btn btn-outline">
+        <i class="fa-brands fa-github"></i> Code (Coming Soon)
+    </a>
+    <a href="#citation" class="btn btn-outline">
+        <i class="fa-solid fa-quote-right"></i> BibTeX
+    </a>
+    </div>
+</div>
+
+<!-- Teaser -->
+<div class="teaser-container">
+    <!-- Teaser image -->
+    <div class="analysis-image-container">
+      <img src="assets/teaser.png" alt="DA-Flow teaser" class="analysis-image" />
+    </div>
+
+    <br />
+
+    <!-- TL;DR Box -->
+    <div class="tldr-box">
+    <div class="tldr-content">
+        <span class="tldr-label">TL;DR</span>
+        <p class="tldr-text">
+        <span class="tldr-highlight">DA-Flow</span> lifts a pretrained image restoration diffusion model
+        with full spatio-temporal attention, then fuses diffusion features for <strong>degradation-aware optical flow estimation</strong>.
+        </p>
+    </div>
+    </div>
+
+    <br />
+
+    <!-- Qualitative carousel -->
+    <div id="carousel-teaser" class="carousel-container"></div>
+
+    <div class="teaser-caption">
+        <p>
+            <span class="tldr-highlight">DA-Flow</span> accurately recovers motion from severely degraded video inputs
+            where existing optical flow methods (RAFT, SEA-RAFT, FlowSeek) produce noisy, inconsistent flow fields.
+            By leveraging degradation-aware features from a lifted image restoration diffusion model, DA-Flow substantially
+            outperforms baselines on multiple benchmarks under severe corruption.
+        </p>
+    </div>
+</div>
+</section>
+
+<!-- Abstract -->
+<section class="section alt-bg">
+<div class="container">
+    <h2 class="section-title">Abstract</h2>
+    <div class="abstract-text">
+    <p>
+      Optical flow models trained on high-quality data degrade severely when confronted with real-world corruptions
+      such as blur, noise, and compression artifacts. We formulate <strong>Degradation-Aware Optical Flow</strong>,
+      a new task targeting accurate dense correspondence estimation from corrupted video. Our key insight is that
+      intermediate representations of image restoration diffusion models are inherently corruption-aware. We lift
+      such a model to attend to multiple frames through full spatio-temporal attention and show that the resulting
+      features exhibit zero-shot correspondence capabilities. Based on this finding, we present
+      <strong>DA-Flow</strong>, a hybrid architecture that fuses diffusion features with convolutional features
+      within an iterative refinement framework. DA-Flow substantially outperforms existing optical flow methods
+      under severe degradation across multiple benchmarks.
+    </p>
+    </div>
+</div>
+</section>
+
+<!-- Analysis Section -->
+<section id="analysis" class="section">
+<div class="container">
+    <h2 class="section-title">Analysis</h2>
+
+    <p>
+    We investigate whether pretrained image restoration diffusion models can provide degradation-aware features
+    for geometric correspondence. By lifting the DiT4SR model with full spatio-temporal attention over multi-frame inputs,
+    we analyze the zero-shot correspondence quality of diffusion features under severe degradation.
+    </p>
+
+    <div>
+    <div class="analysis-image-container">
+      <img src="assets/all_plot_avgepe.png" alt="Comparison of layer-wise average EPE over timesteps" class="analysis-image" />
+    </div>
+    <p>
+        <strong>Comparison of layer-wise average EPE over timesteps.</strong>
+        Across nearly all feature indices, the lifted features exhibit substantially lower EPE.
+        This demonstrates that lifting enhances correspondence capability
+        by enabling the model to learn cross-frame information.
+    </p>
+    </div>
+
+    <div>
+    <div class="analysis-image-container" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <img src="assets/top10_plot.png" alt="Top-10 Layer-wise Average EPE" class="analysis-image" style="flex: 1; min-width: 300px;" />
+      <img src="assets/timestep_plot.png" alt="Top-4 Layer EPE over Denoising Steps" class="analysis-image" style="flex: 1; min-width: 300px;" />
+    </div>
+    <p>
+        <strong>Comparison of zero-shot geometric correspondence between Baseline and Lifting features.</strong>
+        (Left) Top-10 layers ranked by timestep-averaged EPE (lower is better).
+        Lifting consistently achieves lower EPE across all ranks.
+        (Right) EPE over denoising steps for the top-4 layers of each method.
+        Baseline features show high sensitivity to the denoising step,
+        while Lifting features remain stable across the denoising steps.
+    </p>
+    </div>
+</div>
+</section>
+
+<!-- DA-Flow Section -->
+<section id="daflow" class="section alt-bg">
+<div class="container">
+    <h2 class="section-title">DA-Flow</h2>
+
+    <div class="analysis-image-container">
+    <img src="assets/main_architecture.png" alt="DA-Flow method overview" class="analysis-image" />
+    </div>
+
+    <p>
+      <strong>Overall Architecture of DA-Flow.</strong>
+      DA-Flow retains the standard correlation operator and iterative update operator from RAFT,
+      while incorporating the lifted diffusion model alongside a conventional CNN feature encoder.
+      Given a pair of degraded input frames, the lifted diffusion model extracts query and key features
+      from full spatio-temporal MM-Attention layers. Features from the top-\(L\) layers with strongest
+      correspondence are aggregated via DPT-based upsampling with three separate heads (query, key, context),
+      then concatenated with CNN encoder features to form hybrid representations for cost volume construction
+      and iterative flow refinement.
+    </p>
+</div>
+</section>
+
+<!-- Results Section -->
+<section id="results" class="section">
+<div class="container">
+
+    <!-- Quantitative Results -->
+    <div class="results-block">
+    <h2 class="section-title">Quantitative Results</h2>
+    <div id="carousel-quan" class="carousel-container"></div>
+    </div>
+
+    <!-- Qualitative Results -->
+    <div class="results-block">
+    <h2 class="section-title">Qualitative Results</h2>
+
+    <div class="qual-benchmark-block">
+        <h3 class="analysis-subtitle" style="text-align:center;">Sintel</h3>
+        <div id="carousel-qual-sintel" class="carousel-container"></div>
+    </div>
+
+    <div class="qual-benchmark-block" style="margin-top: 2rem;">
+        <h3 class="analysis-subtitle" style="text-align:center;">Spring</h3>
+        <div id="carousel-qual-spring" class="carousel-container"></div>
+    </div>
+
+    <div class="qual-benchmark-block" style="margin-top: 2rem;">
+        <h3 class="analysis-subtitle" style="text-align:center;">TartanAir</h3>
+        <div id="carousel-qual-tartanair" class="carousel-container"></div>
+    </div>
+    </div>
+
+</div>
+</section>
+
+<!-- Citation Section -->
+<section id="citation" class="citation-section">
+<div class="container">
+    <h2 class="section-title" style="font-size: 1.5rem; border: none; margin-bottom: 1rem;">Citation</h2>
+    <div class="citation-block">
+    <button onclick="copyBibtex()" class="citation-copy-btn">
+        <i class="fa-regular fa-copy"></i> Copy
+    </button>
+    <pre class="citation-code"><code id="bibtex-text">
+      Coming soon.
+    </code></pre>
+    </div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="container">
+    <p>DA-Flow: Degradation-Aware Optical Flow with Diffusion Models.</p>
+</div>
+</footer>
+
+<script>
+// Generic Carousel Class
+class Carousel {
+    constructor(containerId, data, renderItem) {
+    this.container = document.getElementById(containerId);
+    if (!this.container) return; // safety guard
+    this.data = data;
+    this.renderItem = renderItem;
+    this.currentIndex = 0;
+    this.totalSlides = data.length;
+
+    this.init();
+    window.addEventListener('resize', () => this.updateHeight());
+    this.container.addEventListener('load', () => this.updateHeight(), true);
+    }
+
+    init() {
+    this.container.innerHTML = `
+        <div class="carousel-viewport">
+        <div class="carousel-track">
+            ${this.data.map(item => `
+            <div class="carousel-slide">
+                ${this.renderItem(item)}
+            </div>
+            `).join('')}
+        </div>
+        </div>
+
+        <button class="carousel-nav-btn prev" aria-label="Previous slide">
+        <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="carousel-nav-btn next" aria-label="Next slide">
+        <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="carousel-dots">
+        ${this.data.map((_, i) => `
+            <button class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>
+        `).join('')}
+        </div>
+    `;
+
+    this.track = this.container.querySelector('.carousel-track');
+    this.dots = this.container.querySelectorAll('.carousel-dots button');
+
+    const prevBtn = this.container.querySelector('.carousel-nav-btn.prev');
+    const nextBtn = this.container.querySelector('.carousel-nav-btn.next');
+
+    if (prevBtn) prevBtn.onclick = () => this.move(-1);
+    if (nextBtn) nextBtn.onclick = () => this.move(1);
+    this.dots.forEach((dot, i) => dot.onclick = () => this.goTo(i));
+
+    // For images: update height once each image loads
+    const imgs = this.container.querySelectorAll('img');
+    imgs.forEach(img => {
+        img.addEventListener('load', () => this.updateHeight());
+    });
+
+    this.updateHeight();
+    }
+
+    move(direction) {
+    this.currentIndex = (this.currentIndex + direction + this.totalSlides) % this.totalSlides;
+    this.update();
+    }
+
+    goTo(index) {
+    this.currentIndex = index;
+    this.update();
+    }
+
+    update() {
+    if (!this.track) return;
+    this.track.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+    this.dots.forEach((dot, i) => {
+        dot.className = `carousel-dot ${i === this.currentIndex ? 'active' : ''}`;
+    });
+    this.updateHeight();
+    }
+
+    updateHeight() {
+    const viewport = this.container.querySelector('.carousel-viewport');
+    const slides = this.container.querySelectorAll('.carousel-slide');
+    if (!viewport || !slides[this.currentIndex]) return;
+    const height = slides[this.currentIndex].offsetHeight;
+    if (height > 0) {
+        viewport.style.height = height + 'px';
+    } else {
+        viewport.style.height = 'auto';
+    }
+    }
+}
+
+// ----- Teaser carousel -----
+const teaserItems = [
+    { src: "assets/qual_sintel.png", label: "Sintel" },
+    { src: "assets/qual_spring.png", label: "Spring" },
+    { src: "assets/qual_tartanair.png", label: "TartanAir" },
+];
+
+function renderTeaserSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <div class="qual-grid">
+        <div class="qual-col" style="grid-column: 1 / -1;">
+            <p style="text-align:center; font-size:1.3rem; font-weight:700; color:#64748b; margin:0 0 0.5rem 0;">${item.label}</p>
+            <img src="${item.src}" alt="Qualitative results on ${item.label}" class="qual-vid" style="width:100%; height:auto;" />
+        </div>
+        </div>
+    </div>
+    `;
+}
+
+// ----- Qualitative carousel data -----
+const qualSintelItems = [
+    { src: "assets/supple_sintel_qual_1.png" },
+    { src: "assets/supple_sintel_qual_2.png" },
+];
+const qualSpringItems = [
+    { src: "assets/supple_spring_qual_1.png" },
+    { src: "assets/supple_spring_qual_2.png" },
+];
+const qualTartanairItems = [
+    { src: "assets/supple_tartanair_qual_1.png" },
+    { src: "assets/supple_tartanair_qual_2.png" },
+];
+
+function renderQualSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <div class="qual-grid">
+        <div class="qual-col" style="grid-column: 1 / -1;">
+            <img src="${item.src}" alt="Qualitative results" class="qual-vid" style="width:100%; height:auto;" />
+        </div>
+        </div>
+    </div>
+    `;
+}
+
+// ----- Quantitative table slides -----
+const tableData = [
+    {
+    title: 'Main Results',
+    tables: `
+        <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+            <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            <span><span class="swatch best2"></span>2nd</span>
+            </span>
+        </div>
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th rowspan="2">Model</th>
+                <th colspan="4">Sintel</th>
+                <th colspan="4">Spring</th>
+                <th colspan="4">TartanAir</th>
+            </tr>
+            <tr>
+                <th>EPE&darr;</th><th>1px&darr;</th><th>3px&darr;</th><th>5px&darr;</th>
+                <th>EPE&darr;</th><th>1px&darr;</th><th>3px&darr;</th><th>5px&darr;</th>
+                <th>EPE&darr;</th><th>1px&darr;</th><th>3px&darr;</th><th>5px&darr;</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>RAFT</td>
+                <td>10.693</td><td>62.91</td><td>37.24</td><td>28.63</td>
+                <td>3.944</td><td class="best2">39.82</td><td class="best2">18.65</td><td class="best2">11.98</td>
+                <td>9.487</td><td class="best2">75.17</td><td class="best2">42.96</td><td class="best2">30.04</td>
+            </tr>
+
+            <tr>
+                <td>SEA-RAFT</td>
+                <td class="best2">10.185</td><td class="best2">59.56</td><td class="best2">34.46</td><td class="best2">26.15</td>
+                <td class="best2">2.703</td><td>41.51</td><td>19.31</td><td>12.11</td>
+                <td class="best2">8.316</td><td>77.85</td><td>45.76</td><td>32.15</td>
+            </tr>
+
+            <tr>
+                <td>FlowSeek</td>
+                <td>10.241</td><td>64.08</td><td>40.71</td><td>31.83</td>
+                <td>2.861</td><td>41.53</td><td>19.16</td><td>12.18</td>
+                <td class="best">7.694</td><td>76.96</td><td>45.20</td><td>32.00</td>
+            </tr>
+
+            <tr>
+                <td><span class="tldr-highlight">DA-Flow (Ours)</span></td>
+                <td class="best">6.912</td><td class="best">55.80</td><td class="best">28.10</td><td class="best">20.91</td>
+                <td class="best">2.207</td><td class="best">30.95</td><td class="best">13.87</td><td class="best">8.91</td>
+                <td>8.866</td><td class="best">72.35</td><td class="best">37.61</td><td class="best">25.40</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+        <p>
+        <strong>Quantitative comparison on Sintel, Spring, and TartanAir.</strong>
+        All methods are evaluated using End-Point Error (EPE) and outlier rates at 1px, 3px, and 5px thresholds.
+        DA-Flow achieves the best performance on Sintel and Spring across all metrics, and the best outlier rates on TartanAir.
+        </p>
+    `,
+    },
+
+    {
+    title: 'Ablation: Feature Source',
+    tables: `
+      <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th rowspan="2" style="text-align:center;">Dataset</th>
+                <th rowspan="2" style="text-align:center;">Metric</th>
+                <th rowspan="2" style="text-align:center;">Method</th>
+                <th colspan="10">Denoising Step</th>
+            </tr>
+            <tr>
+                <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th>
+                <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td rowspan="4" style="text-align:center; vertical-align:middle;">Sintel</td>
+                <td rowspan="2" style="text-align:center; vertical-align:middle;">EPE&darr;</td>
+                <td style="text-align:center;">Baseline*</td>
+                <td>7.41</td><td>7.45</td><td>7.51</td><td>7.47</td><td>7.41</td>
+                <td>7.49</td><td>7.52</td><td>7.58</td><td>7.57</td><td>7.69</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;"><span class="tldr-highlight">DA-Flow</span></td>
+                <td class="best">7.02</td><td class="best">6.78</td><td class="best">6.72</td><td class="best">6.72</td><td class="best">6.74</td>
+                <td class="best">6.76</td><td class="best">6.80</td><td class="best">6.87</td><td class="best">7.06</td><td class="best">7.64</td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="text-align:center; vertical-align:middle;">1px&darr;</td>
+                <td style="text-align:center;">Baseline*</td>
+                <td>59.47</td><td>59.26</td><td>59.50</td><td>59.26</td><td>59.60</td>
+                <td>60.16</td><td>59.85</td><td>60.80</td><td>61.02</td><td>61.79</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;"><span class="tldr-highlight">DA-Flow</span></td>
+                <td class="best">57.04</td><td class="best">56.81</td><td class="best">56.39</td><td class="best">55.97</td><td class="best">55.52</td>
+                <td class="best">55.12</td><td class="best">54.79</td><td class="best">54.72</td><td class="best">54.64</td><td class="best">57.03</td>
+            </tr>
+
+            <tr class="group-divider"><td colspan="13"></td></tr>
+
+            <tr>
+                <td rowspan="4" style="text-align:center; vertical-align:middle;">Spring</td>
+                <td rowspan="2" style="text-align:center; vertical-align:middle;">EPE&darr;</td>
+                <td style="text-align:center;">Baseline*</td>
+                <td>2.33</td><td>2.35</td><td>2.25</td><td>2.31</td><td>2.22</td>
+                <td class="best">2.20</td><td>2.20</td><td>2.21</td><td>2.21</td><td>2.23</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;"><span class="tldr-highlight">DA-Flow</span></td>
+                <td class="best">2.29</td><td class="best">2.21</td><td class="best">2.21</td><td class="best">2.20</td><td class="best">2.20</td>
+                <td>2.20</td><td class="best">2.20</td><td class="best">2.19</td><td class="best">2.19</td><td class="best">2.17</td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="text-align:center; vertical-align:middle;">1px&darr;</td>
+                <td style="text-align:center;">Baseline*</td>
+                <td>32.14</td><td>32.74</td><td>32.45</td><td>32.72</td><td>32.23</td>
+                <td>32.24</td><td>32.15</td><td>32.63</td><td>32.24</td><td>31.86</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;"><span class="tldr-highlight">DA-Flow</span></td>
+                <td class="best">30.49</td><td class="best">31.01</td><td class="best">31.06</td><td class="best">30.99</td><td class="best">31.05</td>
+                <td class="best">31.23</td><td class="best">31.23</td><td class="best">31.06</td><td class="best">30.88</td><td class="best">30.54</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Ablation on feature source across denoising steps.</strong>
+        Baseline* uses the same DA-Flow architecture but extracts features from the full-attention model before finetuning.
+        DA-Flow consistently outperforms the baseline, with particularly strong gains on Sintel.
+      </p>
+    `,
+    },
+
+    {
+    title: 'Ablation: Architecture',
+    tables: `
+      <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+            <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            </span>
+        </div>
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th colspan="2">Configuration</th>
+                <th colspan="4">Sintel</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Upsample</th><th>CNN Encoder</th>
+                <th>EPE&darr;</th><th>1px&darr;</th><th>3px&darr;</th><th>5px&darr;</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>(a)</td>
+                <td>Bilinear</td><td style="color:#ef4444; font-size:1.3rem; font-weight:900;">&#10007;</td>
+                <td>7.224</td><td>59.49</td><td>29.55</td><td>21.59</td>
+            </tr>
+            <tr>
+                <td>(b)</td>
+                <td>DPT</td><td style="color:#ef4444; font-size:1.3rem; font-weight:900;">&#10007;</td>
+                <td>8.075</td><td>64.67</td><td>30.07</td><td>21.95</td>
+            </tr>
+            <tr>
+                <td>(c)</td>
+                <td>Bilinear</td><td style="color:#22c55e; font-size:1.3rem; font-weight:900;">&#10003;</td>
+                <td>7.123</td><td>57.84</td><td>28.96</td><td>21.14</td>
+            </tr>
+            <tr>
+                <td><span class="tldr-highlight">(d) DA-Flow</span></td>
+                <td>DPT</td><td style="color:#22c55e; font-size:1.3rem; font-weight:900;">&#10003;</td>
+                <td class="best">6.912</td><td class="best">55.80</td><td class="best">28.10</td><td class="best">20.91</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Ablation on architectural components.</strong>
+        The CNN encoder provides consistent improvements with both upsampling methods.
+        DPT upsampling is most effective when combined with CNN features.
+        Row (d) represents DA-Flow.
+      </p>
+    `,
+    },
+
+    {
+    title: 'Application: Video Restoration',
+    tables: `
+      <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+            <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            </span>
+        </div>
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th>Method</th>
+                <th>PSNR&uarr;</th>
+                <th>SSIM&uarr;</th>
+                <th>LPIPS&darr;</th>
+                <th>DOVER&uarr;</th>
+                <th>E<sub>warp</sub>*&darr;</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>MGLD</td>
+                <td>22.50</td><td>0.626</td><td>0.266</td><td>47.41</td><td>4.532</td>
+            </tr>
+            <tr>
+                <td>DiT4SR</td>
+                <td>19.55</td><td>0.511</td><td>0.335</td><td class="best">74.97</td><td>29.50</td>
+            </tr>
+            <tr>
+                <td><span class="tldr-highlight">DA-Flow + MGLD</span></td>
+                <td class="best">23.47</td><td class="best">0.646</td><td class="best">0.215</td><td>57.96</td><td class="best">3.483</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Video restoration results on YouHQ40.</strong>
+        Since DA-Flow reliably estimates accurate optical flow even from severely degraded inputs,
+        it can be directly applied to guide temporal alignment in video restoration.
+        When combined with MGLD, DA-Flow achieves the best PSNR, SSIM, LPIPS, and warping error.
+      </p>
+    `,
+    },
+];
+
+function renderTableSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <h3 class="results-slide-title">${item.title}</h3>
+        <div>${item.tables}</div>
+    </div>
+    `;
+}
+
+// Fade-in Animation
+function initFadeInAnimations() {
+    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+
+    const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+        }
+    });
+    }, observerOptions);
+
+    const sections = document.querySelectorAll('.section, .hero-section, .citation-section, .footer');
+    sections.forEach(section => {
+    section.classList.add('fade-in-section');
+    observer.observe(section);
+    });
+}
+
+// Scroll Spy for Sidebar
+function initScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    const sidebarLinks = document.querySelectorAll('.sidebar-item');
+    const sidebar = document.querySelector('.sidebar');
+
+    const observerOptions = {
+    root: null,
+    rootMargin: '-50% 0px -50% 0px',
+    threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+
+        const activeLink = document.querySelector(`.sidebar-item[href="#${id}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+
+            const linkRect = activeLink.getBoundingClientRect();
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const relativeTop = linkRect.top - sidebarRect.top;
+            sidebar.style.setProperty('--active-position', `${relativeTop - 32}px`);
+        }
+        }
+    });
+    }, observerOptions);
+
+    sections.forEach(section => observer.observe(section));
+}
+
+function copyBibtex() {
+    const text = document.getElementById('bibtex-text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.citation-copy-btn');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+    setTimeout(() => { btn.innerHTML = original; }, 2000);
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new Carousel('carousel-teaser', teaserItems, renderTeaserSlide);
+    new Carousel('carousel-quan', tableData, renderTableSlide);
+    new Carousel('carousel-qual-sintel', qualSintelItems, renderQualSlide);
+    new Carousel('carousel-qual-spring', qualSpringItems, renderQualSlide);
+    new Carousel('carousel-qual-tartanair', qualTartanairItems, renderQualSlide);
+
+    initScrollSpy();
+    initFadeInAnimations();
+});
+</script>
+
+</body>
+</html>
