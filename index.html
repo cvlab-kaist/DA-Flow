@@ -4,9 +4,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DA-Flow: Degradation-Aware Optical Flow with Diffusion Models</title>
+<title>DA-Flow: Degradation-Aware Optical Flow Estimation with Diffusion Models</title>
 <meta name="description"
-content="Project page for DA-Flow: Degradation-Aware Optical Flow with Diffusion Models" />
+content="Project page for DA-Flow: Degradation-Aware Optical Flow Estimation with Diffusion Models" />
 
 <!-- Fonts and Icons -->
 <link rel="stylesheet"
@@ -50,7 +50,7 @@ href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-s
 <section id="overview" class="hero-section">
 <div class="hero-container">
     <h1 class="hero-title">
-    <span class="gradient-text">DA-Flow</span>: Degradation-Aware <br> Optical Flow with Diffusion Models
+    <span class="gradient-text">DA-Flow</span>: Degradation-Aware <br> Optical Flow Estimation with Diffusion Models
     </h1>
     <p class="hero-status">arXiv 2026</p>
 
@@ -82,7 +82,7 @@ href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-s
     <a href="assets/Degradation_Aware_Optical_Flow_with_Diffusion_Models.pdf" class="btn">
         <i class="fa-solid fa-file-pdf"></i> Paper
     </a>
-    <a href="#" class="btn btn-outline">
+    <a href="https://github.com/cvlab-kaist/DA-Flow" class="btn btn-outline">
         <i class="fa-brands fa-github"></i> Code (Coming Soon)
     </a>
     <a href="#citation" class="btn btn-outline">
@@ -237,6 +237,11 @@ href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-s
         <h3 class="analysis-subtitle" style="text-align:center;">TartanAir</h3>
         <div id="carousel-qual-tartanair" class="carousel-container"></div>
     </div>
+
+    <div class="qual-benchmark-block" style="margin-top: 2rem;">
+        <h3 class="analysis-subtitle" style="text-align:center;">Video Restoration (YouHQ40)</h3>
+        <div id="carousel-qual-video" class="carousel-container"></div>
+    </div>
     </div>
 
 </div>
@@ -390,6 +395,58 @@ const qualTartanairItems = [
     { src: "assets/supple_tartanair_qual_1.png" },
     { src: "assets/supple_tartanair_qual_2.png" },
 ];
+
+// ----- Video Restoration qualitative carousel data -----
+const qualVideoItems = [
+    {
+        id: "004",
+        lq: "assets/videos/004/004_lq.mp4",
+        gt: "assets/videos/004/004_gt.mp4",
+        mgld: "assets/videos/004/004_mgld.mp4",
+        dit4sr: "assets/videos/004/004_dit4sr.mp4",
+        ours: "assets/videos/004/004_ours.mp4",
+        qual: "assets/youhq_004_qual.png"
+    },
+    {
+        id: "032",
+        lq: "assets/videos/032/032_lq.mp4",
+        gt: "assets/videos/032/032_gt.mp4",
+        mgld: "assets/videos/032/032_mgld.mp4",
+        dit4sr: "assets/videos/032/032_dit4sr.mp4",
+        ours: "assets/videos/032/032_ours.mp4",
+        qual: "assets/youhq_032_qual.png"
+    },
+];
+
+function renderVideoQualSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <div style="display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0.75rem; width:100%; align-items:stretch;">
+            <div class="qual-col">
+                <div class="qual-header">LQ (Input)</div>
+                <video src="${item.lq}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+            <div class="qual-col">
+                <div class="qual-header">MGLD</div>
+                <video src="${item.mgld}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+            <div class="qual-col">
+                <div class="qual-header">DiT4SR</div>
+                <video src="${item.dit4sr}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+            <div class="qual-col">
+                <div class="qual-header"><span class="tldr-highlight">DA-Flow + MGLD</span></div>
+                <video src="${item.ours}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+            <div class="qual-col">
+                <div class="qual-header">GT</div>
+                <video src="${item.gt}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+            </div>
+        </div>
+        <img src="${item.qual}" alt="Qualitative result for ${item.id}" style="width:80%; height:auto; margin:0.75rem auto 0; display:block; border-radius:0.5rem;" />
+    </div>
+    `;
+}
 
 function renderQualSlide(item) {
     return `
@@ -731,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new Carousel('carousel-qual-sintel', qualSintelItems, renderQualSlide);
     new Carousel('carousel-qual-spring', qualSpringItems, renderQualSlide);
     new Carousel('carousel-qual-tartanair', qualTartanairItems, renderQualSlide);
+    new Carousel('carousel-qual-video', qualVideoItems, renderVideoQualSlide);
 
     initScrollSpy();
     initFadeInAnimations();
