@@ -24,7 +24,7 @@
   </p>
 
   <h3 align="center">
-    <a href="#">Paper</a> |
+    <a href="https://arxiv.org/abs/2603.23499">Paper</a> |
     <a href="https://cvlab-kaist.github.io/DA-Flow">Project Page</a>
   </h3>
 </p>
