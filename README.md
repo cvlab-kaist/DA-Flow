@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">Degradation-Aware Optical Flow with Diffusion Models</h1>
+  <h1 align="center">DA-Flow: Degradation-Aware Optical Flow Estimation with Diffusion Models</h1>
 
   <p align="center">
     <a href="#">Jaewon&nbsp;Min<sup>1</sup></a> ·
