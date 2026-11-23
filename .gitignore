@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+/checkpoints/
+/preset/models
+/data/
+/experiments/
+/results/
+*.npz
