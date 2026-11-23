@@ -2,7 +2,7 @@
   <h1 align="center">DA-Flow: Degradation-Aware Optical Flow Estimation with Image Restoration Diffusion Features</h1>
 
   <p align="center">
-    <a href="#">Jaewon&nbsp;Min<sup>1</sup></a> ·
+    <a href="https://min-jaewon.github.io/">Jaewon&nbsp;Min<sup>1</sup></a> ·
     <a href="#">Jaeeun&nbsp;Lee<sup>1</sup></a> ·
     <a href="#">Yeji&nbsp;Choi<sup>1</sup></a> ·
     <a href="#">Paul&nbsp;Hyunbin&nbsp;Cho<sup>1</sup></a> ·
